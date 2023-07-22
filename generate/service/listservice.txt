@@ -1,0 +1,75 @@
+
+
+
+namespace app\apiadmin\service\{names};
+
+
+
+use app\apiadmin\model\system\{name}Model;
+use app\apiadmin\validate\system\{name}Validate;
+use app\common\utils\Res;
+
+class {name}Service
+{
+
+    public static function list($param){
+        $limit = (int)$param['pageSize'];
+        $offset = ($param['pageNumber']-1)*$limit;
+        $keyword = $param['keyword'];
+        $map=[];
+
+        $result = {name}Model::pageMap($map,$offset,$limit);
+        $total = {name}Model::pageMapCount($map);
+        $data=[
+            'list'=>$result,
+            'total'=>$total
+        ];
+        return Res::ok($data);
+    }
+
+    public static function add($param){
+        try {
+           $validate = new {name}Validate();
+            if (!$validate->check($param)) {
+                return Res::error($validate->getError());
+            }
+          $roleId = {name}Model::add($param);
+
+          return  Res::ok();
+        }catch (\PDOException $e){
+            return Res::error($e->getMessage());
+        }
+    }
+
+
+    public static function del($id){
+        try {
+
+            {name}Model::del($id);
+
+            return  Res::ok();
+        }catch (\PDOException $e){
+            return Res::error($e->getMessage());
+        }
+    }
+
+
+
+    public static function edit($param){
+        try {
+            $validate = new {name}Validate();
+            if (!$validate->check($param)) {
+                return Res::error($validate->getError());
+            }
+            {name}Model::edit($param);
+
+
+            return  Res::ok();
+        }catch (\PDOException $e){
+            return Res::error($e->getMessage());
+        }
+    }
+
+
+
+}

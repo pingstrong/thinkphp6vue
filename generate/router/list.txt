@@ -1,0 +1,8 @@
+Route::group('{name}',function (){
+    Route::post('/index','system.{name}/index');
+    Route::post('/add','system.{name}/add');
+    Route::get('/del','system.{name}/del');
+    Route::post('/edit','system.{name}/edit');
+
+
+})->middleware([AllowCrossDomain::class,AuthCheckToken::class]);

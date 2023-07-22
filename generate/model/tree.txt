@@ -1,0 +1,60 @@
+<?php
+
+
+namespace app\apiadmin\model\{name};
+
+
+use think\Model;
+
+class {name}Model extends Model
+{
+
+    protected $name="{table}";
+
+    protected $pk="{id}";
+
+
+    public static function findByAll()
+    {
+        return self::order('order_by asc')->select();
+    }
+
+
+    public static function add($param)
+    {
+        ${name}Model = new {name}Model();
+        ${name}Model->save($param);
+
+    }
+
+
+    public static function del($id)
+    {
+        self::destroy($id);
+    }
+
+    public static function edit($model)
+    {
+        self::update($model, ['{id}' => $model['{id}']]);
+    }
+
+
+    public static function findByParentId($id)
+    {
+        return self::where('parent_id',$id)->find();
+    }
+
+
+
+
+    public static function changeOrder($model)
+    {
+        self::where('{id}',$model['id'])->update(['order_by'=>$model['num']]);
+    }
+
+
+    public static function findByDeptId($id)
+    {
+        return self::where('{id}',$id)->find();
+    }
+}

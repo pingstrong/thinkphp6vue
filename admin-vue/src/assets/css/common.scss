@@ -1,0 +1,65 @@
+.position-left {
+	  left: 190px;
+	}
+	.position-collapse-left{
+		left:64px !important;
+	}
+	.btn-group{display: flex;align-items: center;justify-content: space-between;}
+.el-button{
+		box-shadow: 0 2px 5px 0px rgba(0, 0, 0, 0.1);
+	}
+	.el-button--text{
+		box-shadow: 0 0 0;
+	}
+	.el-button--primary{
+		box-shadow: 0 5px 7px 0 rgba(86,119,252,.2);
+	}
+	.el-button--success{
+		box-shadow: 0 5px 7px 0 rgba(7,193,96,.2);
+	}
+	.el-button--danger{
+		box-shadow: 0 5px 7px 0 rgba(235,9,9,.2);
+	}
+	.el-table{
+		margin-top: 10px;
+		
+	}
+	.el-table__header tr,
+	  .el-table__header th {
+	    padding: 0;
+	    height: 40px !important;
+	    font-size: 12px;
+	    text-align: center;
+	}
+	.el-table__body tr,
+	  .el-table__body td {
+	    padding: 0;
+	    height: 40px;
+	    font-size: 12px;
+	    text-align: center;
+	}
+	.pt20{
+		padding-top: 10px;
+	}
+	
+	.el-dialog__header{
+		background: #2f353f;
+		padding: 10px 20px 10px;
+	}
+	
+	.el-dialog__title{
+		font-size: 14px;
+		color: #FFFFFF !important;
+	}
+	.el-dialog__headerbtn{
+		top: 12px;
+	}
+	.el-form-item__label{
+		font-size: 12px;
+	}
+	.el-radio__label{
+		font-size: 12px;
+	}
+	.el-input-number--small{
+		width: 100%;
+	}

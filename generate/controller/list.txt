@@ -1,0 +1,47 @@
+
+
+
+namespace app\apiadmin\controller\system;
+
+
+
+use app\apiadmin\service\system\{name}Service;
+use app\common\controller\BaseController;
+
+class {name} extends BaseController
+{
+
+    public function index(){
+        $param = $this->request->post();
+        $result = {name}Service::list($param);
+        return $result;
+    }
+
+    public function add(){
+        $param = $this->request->post();
+        $param['creat_time']=date('Y-m-d H:i:s',time());
+        $param['creat_by']=$this->request->userName;
+        $result = {name}Service::add($param);
+        return $result;
+    }
+
+
+    public function del($id){
+        $result = {name}Service::del($id);
+        return $result;
+    }
+
+
+
+    public function edit(){
+        $param = $this->request->post();
+        $param['update_by']=$this->request->userName;
+        $param['update_time']=date('Y-m-d H:i:s',time());
+        $result = {name}Service::edit($param);
+        return $result;
+    }
+
+
+
+
+}

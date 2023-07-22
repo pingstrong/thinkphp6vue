@@ -1,0 +1,419 @@
+<template>
+	<div>
+		<panle title='角色管理' content="后台管理员的角色"></panle>
+		<div class="searchbar">
+			<el-row class="pt20">
+				<el-col :span="12">
+					<el-button size="mini" @click="init()">刷新</el-button>
+					<pers-button icon="el-icon-edit" size="mini" @click="add()" perms="sys:menu:add" type="primary" label="添加"></pers-button>
+					<pers-button type="danger" size="mini" icon="el-icon-delete" @click="delAll()" perms="sys:role:del" label="批量删除"></pers-button>
+				</el-col>
+				<el-col :span="12" style="text-align: right;">
+					<el-form :inline="true" :model="formInline" class="demo-form-inline">
+
+						<el-form-item label="">
+							<el-input v-model="formInline.keyword" size="mini" placeholder="请输入角色名称"></el-input>
+						</el-form-item>
+
+						<el-form-item>
+							<el-button type="primary" size="mini" @click="serach">查询</el-button>
+						</el-form-item>
+					</el-form>
+				</el-col>
+			</el-row>
+		</div>
+
+		<el-table :data="tableData" style="width: 100%;margin-bottom: 20px;" row-key="id" border stripe default-expand-all
+		 v-loading="loading" @selection-change="handleSelectionChange">
+			<el-table-column type="selection" width="55">
+			</el-table-column>
+			<el-table-column prop="role_id" label="ID" width="55"></el-table-column>
+			<el-table-column prop="role_name" label="角色名称">
+
+
+			</el-table-column>
+			<el-table-column prop="status" label="状态">
+				<template slot-scope="scope">
+					<el-switch v-model="scope.row.status" active-color="#13ce66" inactive-color="#ff4949" @change="changeSwitch(scope.row)"
+					 :active-value="0" :inactive-value="1"></el-switch>
+				</template>
+
+			</el-table-column>
+			<el-table-column prop="order_by" label="排序">
+				<template slot-scope="scope">
+					<el-input v-model="scope.row.order_by" placeholder="请输入内容" size="mini" @input="changInput(scope.row)"></el-input>
+				</template>
+			</el-table-column>
+
+
+			<el-table-column prop="creat_time" label="创建时间"></el-table-column>
+			<el-table-column prop="remarks" label="备注"></el-table-column>
+			<el-table-column prop="role_id" label="操作">
+				<template slot-scope="scope">
+					<PersButton type="text" size="mini" label="编辑" icon="fa  fa-pencil" perms="sys:role:edit" @click="editRole(scope.row)"></PersButton>
+					<PersButton type="text" size="mini" icon="el-icon-delete" perms="sys:role:del" label="删除" @click="delRole(scope.row)"></PersButton>
+				</template>
+			</el-table-column>
+		</el-table>
+
+		<div class="block">
+
+			<el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="pageNumber"
+			 :page-sizes="[10, 50, 100, 200]" :page-size="pageSize" background layout="total, sizes, prev, pager, next, jumper"
+			 :total="total">
+			</el-pagination>
+		</div>
+		<el-dialog :visible.sync="open" width="600px" append-to-body :title="!form.role_id ? '新增角色' : '修改角色'">
+			<el-form ref="form" :model="form" :rules="rules" label-width="80px">
+				<el-row>
+
+
+
+					<el-col :span="24">
+						<el-form-item label="角色名称" prop="role_name">
+							<el-input v-model="form.role_name" placeholder="请输入角色名称" size="small" />
+						</el-form-item>
+					</el-col>
+
+					<el-col :span="24">
+						<el-form-item label="备注">
+							<el-input v-model="form.remarks" type="textarea" placeholder="请输入角色名称" size="small" />
+						</el-form-item>
+					</el-col>
+
+					<el-col :span="12">
+						<el-form-item label="是否启用" prop="status">
+							<el-radio-group v-model="form.status">
+								<el-radio :label="0">启用</el-radio>
+								<el-radio :label="1">禁用</el-radio>
+							</el-radio-group>
+						</el-form-item>
+					</el-col>
+
+					<el-col :span="24">
+						<el-form-item label="角色权限" prop="rules">
+							<el-checkbox v-model="checkedAll" @change="checkAll">全选/清空</el-checkbox>
+							<el-checkbox v-model="checked" @change="checkeds">展开/折叠</el-checkbox>
+							<el-tree ref="tree" :data="parentDate" show-checkbox node-key="id" default-expand-all :default-checked-keys="checkKey"
+							 :props="props" @data-change="handlechange" class="groupmenu">
+							</el-tree>
+						</el-form-item>
+					</el-col>
+
+
+					<el-col :span="24">
+						<el-form-item label="显示排序" prop="order_by">
+							<el-input-number v-model="form.order_by" controls-position="right" :min="0" :value="100" size="small" />
+						</el-form-item>
+					</el-col>
+				</el-row>
+			</el-form>
+			<div slot="footer" class="dialog-footer">
+				<el-button @click="open = false" size="small">取 消</el-button>
+				<el-button type="primary" @click="!form.role_id ? submitForm('form') : subEditForm('form') " size="small">确 定</el-button>
+			</div>
+
+		</el-dialog>
+
+
+	</div>
+</template>
+
+<script>
+	let _self;
+	import Panle from '@/components/Panle';
+	import PersButton from '@/components/PersButton';
+	import {listRoles,addRoles,delRole,listRolesMenu,editRoles} from '@/api/system/role';
+	import {getMenuList} from '@/api/system/menu';
+	export default {
+		components: {
+			Panle,
+			PersButton
+		},
+		data() {
+			return {
+				loading: false,
+				pageSize: 10, //一页显示多少条
+				pageNumber: 1,
+				total: 0, //总页数
+				tableData: [],
+				serachword: '',
+				formInline: {},
+				open: false,
+				form: {
+					"role_id": '',
+					"role_name": "",
+					"remarks": "",
+					"status": 0,
+					"order_by": 100,
+					"rules": []
+				},
+				rules: {
+					role_name: [{
+						required: true,
+						message: "角色名称不能为空",
+						trigger: "blur"
+					}],
+					status: [{
+						required: true,
+						message: "请选择是否启用",
+						trigger: "blur"
+					}],
+					rules: [{
+						required: true,
+						message: "请选择角色权限",
+						trigger: "blur"
+					}]
+				},
+				parentDate: [],
+				props: {
+					// 配置项（必选）
+					value: "id",
+					label: "name",
+					children: "children"
+
+				},
+				checkKey: [],
+				multipleSelection: [],
+				checkedAll: false,
+				checked: true
+			}
+		},
+		created() {
+			_self = this;
+			_self.init();
+		},
+		methods: {
+			init: function() {
+				_self.loading = true;
+				let param = {
+					"pageSize": _self.pageSize,
+					"pageNumber": _self.pageNumber,
+					"keyword": _self.serachword
+				}
+				listRoles(param).then((res) => {
+					console.log(res);
+					if (res.code == 200) {
+						_self.tableData = res.data.list;
+						_self.total = res.data.total;
+						_self.loading = false;
+					}
+				})
+				if (_self.parentDate.length == 0) {
+
+
+					getMenuList().then((res) => {
+						if (res.code == 200) {
+
+							const menu = {
+								id: 0,
+								name: '全部权限',
+								children: []
+							};
+							menu.children = res.data.menuTree;
+							_self.parentDate.push(menu);
+							_self.loading = false;
+						}
+
+					})
+				}
+
+
+			},
+			serach: function() {
+				_self.serachword = _self.formInline.keyword;
+				_self.init();
+			},
+			handleSizeChange: function(e) {
+				console.log(e);
+				_self.pageSize = e;
+				_self.init();
+			},
+			handleCurrentChange: function(e) {
+				console.log(e);
+				_self.pageNumber = e;
+				_self.init();
+			},
+			handleSelectionChange: function(e) {
+				console.log(e);
+				let selectChang = []
+				for (let item of e) {
+					selectChang.push(item.role_id)
+
+				}
+				_self.multipleSelection = selectChang;
+				console.log(selectChang);
+			},
+			handlechange: function(data) {
+				console.log(data);
+				if (data) {
+					this.$nextTick(() => {
+						let checkTreeNode = []
+						for (let item of data) {
+							let node = this.$refs.tree.getNode(item)
+							if (node && node.isLeaf) {
+								checkTreeNode.push(item);
+							}
+						}
+						this.$refs.tree.setCheckedKeys(checkTreeNode);
+					});
+
+				} else {
+					this.$nextTick(() => {
+						this.$refs.tree.setCheckedKeys(_self.checkKey);
+					});
+				}
+			},
+			add: function() {
+				_self.form = {
+					"role_id": '',
+					"role_name": "",
+					"remarks": "",
+					"status": 0,
+					"order_by": 100,
+					"rules": []
+				};
+				_self.checkKey = [];
+				_self.handlechange();
+				_self.open = true;
+			},
+			checkAll: function(e) {
+
+				if (e == true) {
+					_self.$refs.tree.setCheckedNodes(_self.parentDate);
+				} else {
+					_self.$refs.tree.setCheckedNodes([]);
+				}
+			},
+			checkeds: function(e) {
+				_self.checked = e;
+				let list = _self.parentDate;
+				if (e == true) {
+					for (let i = 0; i < list.length; i++) {
+						// 将没有转换成树的原数据设置key为... 的展开
+						_self.$refs.tree.store.nodesMap[list[i].id].expanded = true
+					}
+				} else {
+					for (let i = 0; i < list.length; i++) {
+						// 将没有转换成树的原数据设置key为... 的展开
+						_self.$refs.tree.store.nodesMap[list[i].id].expanded = false
+					}
+				}
+
+			},
+			submitForm:function(data){
+				let trees=   _self.$refs.tree.getCheckedKeys().concat(_self.$refs.tree.getHalfCheckedKeys());
+				_self.form.rules = trees;
+				_self.$refs[data].validate((valid) => {
+					if (valid) {
+						addRoles(_self.form).then((res)=>{
+							console.log(res)
+							if(res.code==200){
+								_self.msgSuccess(res.msg);
+								_self.init();
+								_self.open=false;
+							}else{
+								_self.msgError(res.msg);
+							}
+						})
+					}else{
+						 return false;
+					}
+				})
+			},
+			delRole:function(data) {
+			  _self.$confirm('确定删除【' + data.role_name + '】此规则', '提示', {
+			    confirmButtonText: '确定',
+			    cancelButtonText: '取消',
+			    type: 'warning'
+			  }).then(() => {
+			    
+				delRole(data.role_id).then((res)=>{
+					if(res.code==200){
+						_self.msgSuccess(res.msg);
+						_self.init();
+					}else{
+						_self.msgError(res.msg);
+					}
+				})
+			
+				
+			  }).catch(() =>{
+			    _self.$message({
+			      type: 'info',
+			      message: '已取消删除'
+			    });
+			  });
+			},
+			editRole:function(data){
+				
+				_self.form.role_id = data.role_id;
+				listRolesMenu(data.role_id).then((res)=>{
+					_self.checkKey = res.data;
+					_self.handlechange(res.data);
+				})
+				let editForm ={
+					"role_id":data.role_id,
+					"role_name":data.role_name,
+					"remarks":data.remarks,
+					"status":data.status,
+					"order_by":data.order_by,
+					}
+				Object.assign(_self.form,editForm);
+				_self.open=true;
+			},
+			subEditForm:function(data){
+				
+				let trees = _self.$refs.tree.getCheckedKeys().concat(_self.$refs.tree.getHalfCheckedKeys());
+				_self.form.rules = trees;
+				_self.$refs[data].validate((valid) => {
+					if (valid) {
+						editRoles(_self.form).then((res)=>{
+							if(res.code==200){
+								_self.msgSuccess(res.msg);
+								_self.init();
+								_self.open=false;
+								
+							}else{
+								_self.msgError(res.msg);
+							}
+						})
+					}else{
+						 return false;
+					}
+				})
+				
+			},
+		}
+	}
+</script>
+
+<style lang="scss">
+	@import "@/assets/css/common.scss";
+
+	.demo-form-inline {
+		.el-form-item {
+			margin-bottom: 0;
+		}
+	}
+
+	.el-tree {
+		max-height: 200px;
+		overflow: auto;
+		background: #f7f7f7;
+	}
+
+	.el-tree-node__label,
+	.el-textarea__inner {
+		font-size: 12px;
+	}
+
+	.groupmenu .el-tree-node__children .el-tree-node__children .el-tree-node__children .el-tree-node__content {
+		float: left;
+		width: 100px;
+	}
+
+	.el-checkbox__label {
+		font-size: 12px !important;
+	}
+</style>

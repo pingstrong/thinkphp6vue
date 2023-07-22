@@ -1,0 +1,23 @@
+<?php
+
+
+namespace app\apiadmin\validate\system;
+
+
+use think\Validate;
+
+class {name}Validate extends Validate
+{
+
+    protected $rule = [
+       {listvaidate}
+        //'role_name'  =>  'require',
+     ];
+
+    protected $message = [
+     {listvaidates}
+        //'role_name.require'=>'角色名称必填~~',
+
+    ];
+
+}
