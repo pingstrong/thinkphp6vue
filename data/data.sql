@@ -11,7 +11,7 @@
  Target Server Version : 101102
  File Encoding         : 65001
 
- Date: 22/07/2023 21:44:51
+ Date: 23/07/2023 19:07:54
 */
 
 SET NAMES utf8mb4;
@@ -59,7 +59,7 @@ CREATE TABLE `pg_article_content`  (
 -- ----------------------------
 -- Records of pg_article_content
 -- ----------------------------
-INSERT INTO `pg_article_content` VALUES (3, NULL, NULL, NULL, '血战到底，巴赫穆特遭弹雨覆盖烈焰滚滚：车臣突击部队也顶不住了', 'http://www.backend.cc/storage/gif/64bb76e212cd2.gif', 3, '<p>深夜的巴赫穆特市区烈阳滚滚，乌军冰雹火箭炮开始对巴赫穆特市区俄军目标展开第一轮覆盖性轰击。俄军炮兵与乌军炮兵迅速爆发炮战，在战斗当中，乌军第3亚速突击旅呼叫火力支援，海马斯摧毁俄军阵地一门俄军最强240毫米口径超重型自行迫击炮。<br/></p>', 1, 88);
+INSERT INTO `pg_article_content` VALUES (3, NULL, NULL, NULL, '血战到底，巴赫穆特遭弹雨覆盖烈焰滚滚：车臣突击部队也顶不住了', 'http://www.backend.cc/storage/gif/64bb7340f30dd.gif', 3, '<p>深夜的巴赫穆特市区烈阳滚滚，乌军冰雹火箭炮开始对巴赫穆特市区俄军目标展开第一轮覆盖性轰击。俄军炮兵与乌军炮兵迅速爆发炮战，在战斗当中，乌军第3亚速突击旅呼叫火力支援，海马斯摧毁俄军阵地一门俄军最强240毫米口径超重型自行迫击炮。<br/></p>', 1, 88);
 INSERT INTO `pg_article_content` VALUES (4, NULL, NULL, NULL, '我成了全村第一个开拖拉机的女生', 'http://www.backend.cc/storage/png/64bb76f40b8e5.png', 3, '<p>我成了全村第一个开拖拉机的女生</p><p>【#我成了全村第一个开拖拉机的女生#】 #你会为了家人回村上班么# 安徽亳州，24岁女生姜晓娜在城里做了4年美甲师，去年她辞职回家学开收割机，成了村里第一个会开农机的女生。农忙季节，她5点起床收麦子，最多一天收100亩地。姜晓娜说：其实收麦子收入不高，但“比做100副美甲更有成就感”。@田野视频<br/></p>', 0, 12);
 
 -- ----------------------------
@@ -121,6 +121,72 @@ CREATE TABLE `pg_files_set`  (
 -- Records of pg_files_set
 -- ----------------------------
 INSERT INTO `pg_files_set` VALUES (1, 'png,jpg,txt,doc,xls,gif,jpeg,txt', '19285000', 'aaaaaaaaaaa', 'bbbbbbbbbb', 'static', 'xxx.com', NULL, NULL, NULL, NULL, 0, NULL, NULL, NULL, NULL, NULL);
+
+-- ----------------------------
+-- Table structure for pg_gen
+-- ----------------------------
+DROP TABLE IF EXISTS `pg_gen`;
+CREATE TABLE `pg_gen`  (
+  `gid` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '表名称',
+  `engine` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '类型',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `comment` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '描述',
+  `mname` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 实体',
+  `type` int NULL DEFAULT 0 COMMENT ' 类型',
+  `pagepack` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 包名',
+  `remks` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 备注',
+  `rname` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 功能名',
+  `id` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '主键ID',
+  `parent` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL,
+  `treename` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL,
+  `gentype` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 生成类型',
+  `leve_name` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 子表名称',
+  `leve_id` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '子表ID',
+  `is_menu` int NULL DEFAULT 0 COMMENT ' 是否生成菜单',
+  `menu_id` int NULL DEFAULT NULL COMMENT ' 生成菜单的上级ID',
+  `is_url` int NULL DEFAULT 0 COMMENT '生成路径0默认，1自定义',
+  `urls` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT ' 路径地址',
+  PRIMARY KEY (`gid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 52 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_bin COMMENT = '代码生成表' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of pg_gen
+-- ----------------------------
+INSERT INTO `pg_gen` VALUES (51, 'ky_news_cate', 'InnoDB', '2021-08-26 16:05:51', '新闻资料分类', 'Cate', 1, 'news', '资讯分类', '新闻资料分类', 'cate_id', 'parent_id', 'cate_name', '1,2,3,4,5,6', NULL, NULL, 0, NULL, 1, '/news');
+
+-- ----------------------------
+-- Table structure for pg_gen_list
+-- ----------------------------
+DROP TABLE IF EXISTS `pg_gen_list`;
+CREATE TABLE `pg_gen_list`  (
+  `glid` int NOT NULL AUTO_INCREMENT,
+  `field` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '字段名称',
+  `type` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '类型',
+  `comment` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '描述',
+  `is_add` int NULL DEFAULT 0 COMMENT '添加显示',
+  `is_edit` int NULL DEFAULT 0 COMMENT '编辑显示',
+  `is_list` int NULL DEFAULT 0 COMMENT '列表显示',
+  `is_view` int NULL DEFAULT 0 COMMENT '展示类型',
+  `is_val` int NULL DEFAULT 0 COMMENT '是否验证',
+  `gid` int NULL DEFAULT NULL,
+  `is_pk` int NULL DEFAULT 0 COMMENT '是否是主键',
+  PRIMARY KEY (`glid`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 542 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_bin COMMENT = '代码生成字字段表' ROW_FORMAT = COMPACT;
+
+-- ----------------------------
+-- Records of pg_gen_list
+-- ----------------------------
+INSERT INTO `pg_gen_list` VALUES (532, 'cate_id', 'int(11)', '编号', 1, 1, 0, 0, 1, 51, 1);
+INSERT INTO `pg_gen_list` VALUES (533, 'cate_name', 'varchar(45)', ' 分类名称', 0, 0, 0, 0, 0, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (534, 'parent_id', 'int(11)', '上级ID', 0, 0, 0, 4, 0, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (535, 'remarks', 'varchar(100)', '备注', 0, 0, 0, 0, 0, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (536, 'creat_time', 'datetime', '创建时间', 1, 1, 1, 0, 1, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (537, 'creat_by', 'varchar(45)', '创建者', 1, 1, 1, 0, 1, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (538, 'update_time', 'datetime', '修改时间', 1, 1, 1, 0, 1, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (539, 'update_by', 'varchar(45)', '修改者', 1, 1, 1, 0, 1, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (540, 'order_by', 'int(255)', '排序', 0, 0, 0, 0, 0, 51, 0);
+INSERT INTO `pg_gen_list` VALUES (541, 'type', 'int(11)', '类形', 0, 0, 1, 3, 0, 51, 0);
 
 -- ----------------------------
 -- Table structure for pg_setting
@@ -224,7 +290,7 @@ CREATE TABLE `pg_sys_member`  (
 -- ----------------------------
 -- Records of pg_sys_member
 -- ----------------------------
-INSERT INTO `pg_sys_member` VALUES (1, 'admins', '阿斯蒂芬', '619cf12c5fe33ced4a99b19079c292e2', 'http://www.backend.cc/storage/png/64bb7a53c82d8.png', '127.0.0.1', '2021-01-03 11:05:08', 'admins', '2021-01-11 22:09:59', 'admins', 1, '17787877777', 1, NULL);
+INSERT INTO `pg_sys_member` VALUES (1, 'admins', '阿斯蒂芬', 'f379eaf3c831b04de153469d1bec345e', 'http://www.backend.cc/storage/png/64bb7a53c82d8.png', '127.0.0.1', '2021-01-03 11:05:08', 'admins', '2021-01-11 22:09:59', 'admins', 1, '17787877777', 1, NULL);
 INSERT INTO `pg_sys_member` VALUES (2, 'test123', 'test', 'f379eaf3c831b04de153469d1bec345e', 'http://www.backend.cc/storage/gif/64bb76e212cd2.gif', NULL, '2023-07-19 13:54:48', 'admins', '2023-07-22 21:34:24', 'admins', 0, '18888888888', 1, NULL);
 
 -- ----------------------------
@@ -339,20 +405,5 @@ INSERT INTO `pg_sys_role_menu` VALUES (6, 8);
 INSERT INTO `pg_sys_role_menu` VALUES (6, 0);
 INSERT INTO `pg_sys_role_menu` VALUES (6, 1);
 INSERT INTO `pg_sys_role_menu` VALUES (6, 2);
-
--- ----------------------------
--- Table structure for pg_ttest
--- ----------------------------
-DROP TABLE IF EXISTS `pg_ttest`;
-CREATE TABLE `pg_ttest`  (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `name` varchar(45) CHARACTER SET utf8mb3 COLLATE utf8mb3_bin NULL DEFAULT NULL COMMENT '名称',
-  `type` int NULL DEFAULT NULL COMMENT '类型',
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_bin ROW_FORMAT = COMPACT;
-
--- ----------------------------
--- Records of pg_ttest
--- ----------------------------
 
 SET FOREIGN_KEY_CHECKS = 1;

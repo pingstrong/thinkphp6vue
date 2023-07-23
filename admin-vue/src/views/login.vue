@@ -7,9 +7,9 @@
 			
 
 			<el-form :model="loginForm" class="login-elform" ref="loginForm" label-position="left" label-width="0px">
-				<div class="login-img">
+				<!-- <div class="login-img">
 					<img src="../assets/img/logo1.png" />
-				</div>
+				</div> -->
 
 				<el-form-item prop="user_name">
 					<el-input v-model="loginForm.user_name" prefix-icon="el-icon-user-solid" placeholder="登录账号"></el-input>
@@ -52,9 +52,9 @@
 		data() {
 			return {
 				loginForm: {
-					user_name: "admins",
+					user_name: "",
 					src: '',
-					password: "he201391",
+					password: "",
 					code: "",
 					codekey: "",
 				},
@@ -126,7 +126,7 @@
 			.login-elform {
 				width: 300px;
 				padding: 20px;
-				
+				 
 				background: rgba(255, 255, 255, 1);
 				border-radius: 5px;
 			}

@@ -24,6 +24,18 @@ class Res
     }
 
 
+    /**
+     * @param $msg 返回的错误信息
+     * @return \think\response\Json
+     */
+    public static function noauth($msg)
+    {
+        $result = [
+            'code' => ErrorCode::NO_AUTH,
+            'msg' => $msg
+        ];
+        return  self::jsonResult($result);
+    }
 
     /**
      * @param $msg 返回的错误信息
