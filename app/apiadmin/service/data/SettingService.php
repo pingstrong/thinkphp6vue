@@ -14,7 +14,7 @@ class SettingService
     public static function getListByKey($key): array
     {
         $data = [];
-        $list = Db::name("setting")->where("skey", $key)->select();
+        $list = Db::name("setting")->where(["skey" => $key, 'state' => 1])->select();
         if ($list) {
             foreach ($list as $key => $row) {
                 # code...
